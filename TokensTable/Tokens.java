@@ -13,17 +13,6 @@ public class Tokens {
         this.line = line;
     }
 
-    /*public enum TokenType{
-        KEYWORD,
-        IDENTIFIER,
-        CONSTANT,
-        ARITHMETIC_OPERATOR,
-        RELATIONAL_OPERATOR,
-        LOGICAL_OPERATOR,
-        PUNCTUATION,
-        UNKNOWN
-    }*/
-
     public String getLexeme() {
         return lexeme;
     }
