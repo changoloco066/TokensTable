@@ -7,14 +7,13 @@ public class Lexer {
 
     private List<Tokens> tokens;
 
-    // 🔹 Diccionarios (base de clasificación)
-    private static final Set<String> KEYWORDS = Set.of(
-        "if", "else", "while", "for", "int", "float", "return"
-    );
-
-    private static final Set<Character> ARITHMETIC_OPS = Set.of('+', '-', '*', '/');
+    private static final Set<String> KEYWORDS = Set.of("if", "else", "while", "for", "int", "float", "return");
+    private static final Set<Character> ARITHMETIC_OPS = Set.of('+', '-', '*', '/', '%', '^');
     private static final Set<Character> RELATIONAL_OPS = Set.of('>', '<', '=');
-    private static final Set<Character> PUNCTUATION = Set.of(';', ',', '(', ')', '{', '}');
+    private static final Set<Character> LOGICAL_OPS = Set.of('&', '|', '!' );
+    private static final Set<Character> PUNCTUATION = Set.of(';', ',', '.', ':', '(', ')', '{', '}', '[', ']');
+    private static final Set<Character> SPECIAL_SYMBOLS = Set.of('@', '#', '$', '_');
+    private static final Set<Character> STRING_DELIMITERS = Set.of('"', '\'');
 
     public Lexer() {
         tokens = new ArrayList<>();
@@ -46,7 +45,7 @@ public class Lexer {
 
             int start = i;
 
-            // 🔹 Identifiers / Keywords
+            // identifiers keywords 
             if (Character.isLetter(c)) {
                 StringBuilder sb = new StringBuilder();
 
@@ -65,20 +64,36 @@ public class Lexer {
                 }
             }
 
-            // 🔹 Numbers
+            // Numbers 
             else if (Character.isDigit(c)) {
                 StringBuilder sb = new StringBuilder();
+                boolean hasDot = false;
 
-                while (i < line.length() &&
-                       Character.isDigit(line.charAt(i))) {
-                    sb.append(line.charAt(i));
+                while (i < line.length()){
+                    char current = line.charAt(i);
+
+                    if (Character.isDigit(current)){
+                        sb.append(current);
+                    }
+
+                    else if(current == '.' && ! hasDot){
+                        sb.append(current);
+                        hasDot= true;
+                    }
+                    else {
+                        break;
+                    }
                     i++;
                 }
 
                 addToken(sb.toString(), TokenType.CONSTANT, start, lineNumber);
             }
 
-            // 🔹 Operators
+             else if (STRING_DELIMITERS.contains(c)) {
+                addToken(String.valueOf(c), TokenType.STRING_DELIMITER, start, lineNumber);
+                i++;
+            }
+
             else if (ARITHMETIC_OPS.contains(c)) {
                 addToken(String.valueOf(c), TokenType.ARITHMETIC_OPERATOR, start, lineNumber);
                 i++;
@@ -89,13 +104,21 @@ public class Lexer {
                 i++;
             }
 
-            // 🔹 Punctuation
+            else if (LOGICAL_OPS.contains(c)) {
+                addToken(String.valueOf(c), TokenType.LOGICAL_OPERATOR, start, lineNumber);
+                i++;
+            }
+
             else if (PUNCTUATION.contains(c)) {
                 addToken(String.valueOf(c), TokenType.PUNCTUATION, start, lineNumber);
                 i++;
             }
 
-            // 🔹 Unknown
+            else if (SPECIAL_SYMBOLS.contains(c)) {
+                addToken(String.valueOf(c), TokenType.SPECIAL_SYMBOL, start, lineNumber);
+                i++;
+        }
+
             else {
                 addToken(String.valueOf(c), TokenType.UNKNOWN, start, lineNumber);
                 i++;
