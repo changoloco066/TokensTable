@@ -21,7 +21,7 @@ The analyzer recognizes the following token categories:
 | `CONSTANT` | Numeric literals | `42`, `3.14`, `0.5` |
 | `ARITHMETIC_OPERATOR` | Math operators | `+`, `-`, `*`, `/`, `%`, `^` |
 | `RELATIONAL_OPERATOR` | Comparison operators | `>`, `<`, `=` |
-| `LOGICAL_OPERATOR` | Boolean operators | `&`, `|`, `!` |
+| `LOGICAL_OPERATOR` | Boolean operators | `&`, `\|`, `!` |
 | `PUNCTUATION` | Delimiters & separators | `;`, `,`, `.`, `:`, `(`, `)`, `{`, `}`, `[`, `]` |
 | `SPECIAL_SYMBOL` | Special characters | `@`, `#`, `$`, `_` |
 | `STRING_DELIMITER` | Quote marks | `"`, `'` |
