@@ -1,12 +1,17 @@
 package TokensTable.TokensTable;
 
 public enum TokenType{
-        KEYWORD,
-        IDENTIFIER,
-        CONSTANT,
-        ARITHMETIC_OPERATOR,
-        RELATIONAL_OPERATOR,
-        LOGICAL_OPERATOR,
-        PUNCTUATION,
-        UNKNOWN
-    }
+    KEYWORD,
+    IDENTIFIER,
+    CONSTANT,
+
+    ARITHMETIC_OPERATOR,
+    RELATIONAL_OPERATOR,
+    LOGICAL_OPERATOR,
+
+    PUNCTUATION,
+    SPECIAL_SYMBOL,
+    STRING_DELIMITER,
+
+    UNKNOWN
+}
