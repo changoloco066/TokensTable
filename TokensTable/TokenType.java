@@ -12,6 +12,14 @@ public enum TokenType{
     PUNCTUATION,
     SPECIAL_SYMBOL,
     STRING_DELIMITER,
+    STRING_LITERAL, 
 
-    UNKNOWN
+    UNKNOWN,
+
+    ASSIGN_OPERATOR,
+    PRINT_KEYWORD,       
+    VAR_KEYWORD,         
+    IF_KEYWORD,          
+    ELSE_KEYWORD,        
+    WHILE_KEYWORD,      
 }

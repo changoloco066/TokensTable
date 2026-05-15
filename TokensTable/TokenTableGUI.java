@@ -2,34 +2,50 @@ package TokensTable.TokensTable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
-import TokensTable.TokensTable.Lexer;
-import TokensTable.TokensTable.TokenType;
-import TokensTable.TokensTable.Tokens;
-
 import java.awt.*;
 import java.util.List;
 
 public class TokenTableGUI extends JFrame {
 
     private JTextArea inputArea;
-    private JTable table; 
-    private DefaultTableModel model;
+    private JTable tokenTable;
+    private DefaultTableModel tokenModel;
+    private JTable errorTable;
+    private DefaultTableModel errorModel;
 
     public TokenTableGUI() {
         setTitle("Lexical Analyzer");
-        setSize(800, 500);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        inputArea = new JTextArea(5, 40);
-        add(new JScrollPane(inputArea), BorderLayout.NORTH);
+        // ── Input area (panel superior del split) ──
+        inputArea = new JTextArea();
+        inputArea.setText(buildSampleCode());
+        JScrollPane inputScroll = new JScrollPane(inputArea);
+        inputScroll.setBorder(BorderFactory.createTitledBorder("Source Code"));
 
-        String[] columns = {"Lexeme", "Token Type", "Position", "Line"};
-        model = new DefaultTableModel(columns, 0);
-        table = new JTable(model);
-        add(new JScrollPane(table), BorderLayout.CENTER);
+        // ── Tabs con las dos tablas (panel inferior del split) ──
+        JTabbedPane tabs = new JTabbedPane();
 
+        String[] tokenCols = {"Lexeme", "Token Type", "Position", "Line"};
+        tokenModel = new DefaultTableModel(tokenCols, 0);
+        tokenTable = new JTable(tokenModel);
+        tabs.addTab("Token Table", new JScrollPane(tokenTable));
+
+        String[] errorCols = {"Line", "Position", "Error", "Context"};
+        errorModel = new DefaultTableModel(errorCols, 0);
+        errorTable = new JTable(errorModel);
+        tabs.addTab("Syntax Errors", new JScrollPane(errorTable));
+
+        // ── SplitPane para que el usuario pueda redimensionar ──
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, inputScroll, tabs);
+        splitPane.setDividerLocation(180);
+        splitPane.setResizeWeight(0.3);
+
+        add(splitPane, BorderLayout.CENTER);
+
+        // ── Botón ──
         JButton analyzeBtn = new JButton("Analyze");
         add(analyzeBtn, BorderLayout.SOUTH);
         analyzeBtn.addActionListener(e -> analyzeText());
@@ -41,19 +57,33 @@ public class TokenTableGUI extends JFrame {
         Lexer lexer = new Lexer();
         List<Tokens> tokens = lexer.analyze(input);
 
+        Parser parser = new Parser(tokens);
+        parser.parse();
+        List<ParseError> errors = parser.getErrors();
+
         loadTokens(tokens);
+        loadErrors(errors);
     }
 
     private void loadTokens(List<Tokens> tokens) {
-        model.setRowCount(0);
-
+        tokenModel.setRowCount(0);
         for (Tokens t : tokens) {
-            model.addRow(new Object[]{
-                t.getLexeme(),
-                t.getType(),
-                t.getPosition(),
-                t.getLine()
+            tokenModel.addRow(new Object[]{
+                t.getLexeme(), t.getType(), t.getPosition(), t.getLine()
             });
         }
+    }
+
+    private void loadErrors(List<ParseError> errors) {
+        errorModel.setRowCount(0);
+        for (ParseError e : errors) {
+            errorModel.addRow(new Object[]{
+                e.getLine(), e.getPosition(), e.getMessage(), e.getContext()
+            });
+        }
+    }
+
+    private String buildSampleCode() {
+        return "var x = 10\nvar y = 3\nvar resultado = x + y * 2\nif (resultado > 15) {\n    print(\"Mayor que 15\")\n} else {\n    print(resultado)\n}\nwhile (x > 0) {\n    x = x - 1\n}\n";
     }
 }
